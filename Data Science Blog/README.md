@@ -34,20 +34,20 @@ No models were created to answer questions mentioned. It is a purely anlytical p
  
  Finding : 
  It looks like people tend to rate higher on locations for AirBnbs near the airport compared to AirBnbs farther from the airport.
- ![alt text](https://github.com/sujanshahi050/Data-Science-Projects/DataScienceBlog/result_images/locationRatings-vs-distance.png?raw=true)
+ ![alt text](https://github.com/sujanshahi050/Data-Science-Projects/blob/main/Data%20Science%20Blog/results_images/locationRatings-vs-distance.png)
  
  
  2) How does average price of AirBnb properties vary as we move farther away from the airport?
  
  Finding:
  The average price of AirBnb gets higher as we go closer to the airport.
- ![alt text](https://github.com/sujanshahi050/Data-Science-Projects/blob/main/Data%20Science%20Blog/results_images/locationRatings-vs-distance.png)
+ ![alt text](https://github.com/sujanshahi050/Data-Science-Projects/blob/main/Data%20Science%20Blog/results_images/avg-price-vs-distance.jpg)
  
  3) What does overall ratings of properties look like as we move farther away from airport?
  
  Finding:
  The overall ratings seems to be higher for those properties near the airport
-  ![alt text](https://github.com/sujanshahi050/Data-Science-Projects/DataScienceBlog/result_images/overallRating-vs-distance.png?raw=true)
+  ![alt text](https://github.com/sujanshahi050/Data-Science-Projects/blob/main/Data%20Science%20Blog/results_images/overallRating-vs-distance.png)
 
 
 
