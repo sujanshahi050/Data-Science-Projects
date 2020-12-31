@@ -41,7 +41,7 @@ No models were created to answer questions mentioned. It is a purely anlytical p
  
  Finding:
  The average price of AirBnb gets higher as we go closer to the airport.
- ![alt text](https://github.com/sujanshahi050/Data-Science-Projects/DataScienceBlog/result_images/avg-price-vs-distance.jpg?raw=true)
+ ![alt text](https://github.com/sujanshahi050/Data-Science-Projects/blob/main/Data%20Science%20Blog/results_images/locationRatings-vs-distance.png)
  
  3) What does overall ratings of properties look like as we move farther away from airport?
  
