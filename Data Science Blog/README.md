@@ -3,7 +3,7 @@
 
 # Business Understanding
 
-With the prevalence of AirBnb around the world, I wanted to see how AirBnb properties near Boston Logan International Airport are doing. To do so, I
+With prevalence of AirBnb around the world, I wanted to see how AirBnb properties near Boston Logan International Airport are doing. To do so, I
 came up with three questions:
 
     1) How have people rated on locations to those properties closer from the airport?
