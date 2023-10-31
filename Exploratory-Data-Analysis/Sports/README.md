@@ -1,1 +1,1 @@
-This directory consists of all of the EDA projects that I did in the field of sports.
+This directory is for all of my Exploratory Data Analysis in the field of Sports.
