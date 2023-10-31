@@ -1,1 +1,1 @@
-# Data-Science-Projects
+This repository consists of Data Science Projects. 
