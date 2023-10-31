@@ -1,0 +1,167 @@
+---
+title: "Using R to perform an Exploratory Data Analysis on Marcus Rashford's performance in Premier League since 2015"
+author: "Sujan Shahi"
+output: 
+  html_document: 
+    toc: yes
+    number_sections: no
+---
+
+
+```{r echo=FALSE, out.width = "20%", fig.align = "center"}
+#Image of Marcus Rashford, Photo Credit: Fantasy Premier League (https://fantasy.premierleague.com/)
+knitr::include_graphics("https://resources.premierleague.com/premierleague/photos/players/250x250/p176297.png")
+```
+
+## A brief introduction
+
+I am a very passionate football(soccer) fan and I have been following Manchester United since I was a boy.Manchester United play in the Premier League in England. It is one of the biggest football leagues in the world. Marcus Rashford is one of our academy player who burst into the scene in 2015/2016 which was his senior debut season. Since then, he has been a player on watch for Manchester United.
+
+## Analysis Objective
+The main goal of this analysis is to look at his performance since 2015/2016 till now. We will look into three main things:
+a) Goals Scored per season
+b) Assists per Season
+c) Goals vs Assists
+
+
+## Accessing data using API's
+
+We will be using the API's provided by FPL to download the data. You can find more information on FPL API on this website.  https://www.game-change.co.uk/2023/02/10/a-complete-guide-to-the-fantasy-premier-league-fpl-api/ 
+
+In order to access a player's information for current season along with the previous season, the following API is used: https://fantasy.premierleague.com/api/element-summary/{player-id}/. But, we don't know the player id for Marcus Rashford yet, so let's do some data exploration to find out his player id. We will use the general API to access general information on teams and players playing in the premier league using the following API: https://fantasy.premierleague.com/api/bootstrap-static/
+
+
+```{r}
+# Importing Libraries for handling API
+library(httr)
+library(jsonlite)
+library('dplyr')
+
+# Making the request for the general data
+base_url = 'https://fantasy.premierleague.com/api/bootstrap-static/'
+res = GET(base_url)
+print(res)
+```
+In its current state, the data in the 'res' variable is not usable. The actual data is contained as raw Unicode in the res list, which ultimately needs to be converted into JSON format. 
+To do this, we first need to convert the raw Unicode into a character vector that resembles the JSON format shown above. The rawToChar() function performs just this task, (Credit:https://www.dataquest.io/blog/r-api-tutorial/ )
+```{r}
+#Converting the raw Unicode data to JSON Format
+json_data = fromJSON(rawToChar(res$content))
+class(json_data)
+```
+```{r}
+# Check Columns
+names(json_data)
+```
+
+## Data Exploration
+
+The information about each column is given in this website https://www.game-change.co.uk/2023/02/10/a-complete-guide-to-the-fantasy-premier-league-fpl-api/.
+```{r}
+names(json_data$teams)
+```
+```{r}
+head(json_data$teams, n = 1)
+```
+Let's create a dataframe to store the data for teams and name the variable 'teams_data_frame'
+```{r}
+teams_data_frame <- json_data$teams
+head(teams_data_frame, n = 1)
+```
+### Accessing Marcus Rashford's data 
+```{r}
+# Let's check out the data on Manchester United
+teams_data_frame %>% 
+  filter(name == "Man Utd")
+```
+Now, we know that the code for Manchester United is 1. Now, let's extract all the players who play for Manchester United. The "elements" column (dataframe in itself) has all the basic info on players, so let's use that dataframe.
+
+Let's store that dataframe in 'players_data_frame' variable.
+```{r}
+# Storing the information of all players in the players data frame
+players_data_frame <- json_data$elements
+# Storing information of Manchester United players
+utd_players_data_frame <- players_data_frame %>% 
+                          filter(team_code == 1) %>%
+                          group_by(first_name)
+utd_players_data_frame %>% head
+
+```
+Since our main objective is to find the player_id for Marcus Rashford, we will go ahead and extract that information
+```{r}
+# Storing information about Rashford in "rashford_info"
+rashford_info <- utd_players_data_frame %>% 
+  filter(first_name == "Marcus" & second_name == "Rashford")
+print(rashford_info$id)
+```
+
+ https://fantasy.premierleague.com/api/element-summary/{player_id} API...
+
+## Juicy Part of this Project 
+
+In order to make this reporducible for other players, I decided to create a simple function to get a performance history of the player based on their id.
+```{r}
+# Function to get historic performance data of a player
+# Input: player_id, a number (integer) that denotes a player's id
+# Output: history_data, ( dataframe ), a dataframe containing historic information of the player with player_id
+get_history_data <- function(player_id){
+  url = paste( 'https://fantasy.premierleague.com/api/element-summary/',toString(player_id), '/', sep="" )
+  res = GET(url)
+  history_json_data = fromJSON(rawToChar(res$content))
+  history_data <- history_json_data$history_past
+  history_data
+}
+```
+```{r}
+get_history_data(rashford_info$id)
+```
+```{r}
+# Store the data into marcus_rashford_data dataframe
+rashford_hist_data<- get_history_data(396)
+class(rashford_hist_data)
+```
+
+Import Libraries for Visualization
+```{r}
+library(ggplot2)
+```
+Time to Plot Graphs and line_plot. Let's look at goals_scored by Marcus Rashford from his debut season!
+```{r}
+# Create a lineplot for Goals Scored Per Season
+ggplot(rashford_hist_data, aes(x= season_name, y = goals_scored, group=1, label = rownames(goals_scored))) + 
+  geom_line(linetype = "solid", colour = "red") + 
+  geom_point() +
+  geom_label(label= rashford_hist_data$goals_scored) +
+  labs(title = "Goals Scored per Season") + 
+  xlab("Season") +
+  ylab("Number of Goals Scored")
+```
+
+```{r}
+
+# Create a linplot for number of assists
+ggplot(rashford_hist_data, aes(x= season_name, y = assists, group=1)) + 
+  geom_line(linetype = "solid", colour = "blue") + 
+  geom_point() +
+  geom_label(label= rashford_hist_data$assists)+
+  labs(title = " Number of Assists per Season") +
+  xlab("Season") +
+  ylab("Number of Assists")
+```
+
+```{r}
+# Create a line plot
+ggplot(rashford_hist_data, aes(x = season_name, group = 1)) +
+  geom_line(aes(y = goals_scored, color = "Goals Scored")) +
+  geom_line(aes(y = assists, color = "Assists")) +
+  labs(title = "Goals Scored and Assists Over Seasons",
+       x = "Season",
+       y = "Count") +
+  scale_color_manual(values = c("Goals Scored" = "blue", "Assists" = "red")) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_y_continuous(breaks = seq(0, 20, by = 2))
+```
+
+
+
